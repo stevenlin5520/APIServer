@@ -37,11 +37,11 @@ public class PayController {
 	// 微信服务后台获取预支付交易单的地址
 	private static final String WXSERVER = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 	// 小程序APPID
-	private static final String APPID = "wxd9564b8666be8516";
+	private static final String APPID = "你的小程序APPID";
 	// 商户号
-	private static final String MCHID = "1524932721";
+	private static final String MCHID = "微信商户号MCHID";
 	// 商户私钥
-	private static final String KEY = "4F0FC23BAA304EEDB63D23DDC8C49F72";
+	private static final String KEY = "商户号私钥KEY";
 	// 用户的openid
 	private static final String OPENID = "oJgER5bXxly4yRVT8o8IV9bZAkF8";
 
@@ -77,7 +77,7 @@ public class PayController {
 		// 终端IP String(64) 支持IPV4和IPV6两种格式的IP地址。调用微信支付API的机器IP
 		obj.put("spbill_create_ip", getIpAddress(request));
 		// 通知地址 String(256) 异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数
-		obj.put("notify_url", "http://"+getIpAddress(request)+":8080/MiniProgramServer/login/login");
+		obj.put("notify_url", "http://"+getIpAddress(request)+":8080/APIServer/login/login");
 		// 交易类型 String(16)
 		// JSAPI--JSAPI支付（或小程序支付）、NATIVE--Native支付、APP--app支付，MWEB--H5支付
 		obj.put("trade_type", "JSAPI");
