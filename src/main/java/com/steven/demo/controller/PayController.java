@@ -29,6 +29,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/pay")
@@ -47,12 +48,12 @@ public class PayController {
 
 	/**
 	 * 通过发起请求到微信支付服务后台生成预支付交易单
-	 * @param postMap 小程序发送的数据
+	 * @param postMap 小程序发送的数据 {"body":"测试支付","total_fee":1,"openid":"openidopenid"}
 	 * @param request 客户端请求
 	 */
-	@SuppressWarnings("unused")
+	@ResponseBody
 	@RequestMapping("/prepay")
-	public static void prePay(Map<String, String> postMap, HttpServletRequest request) {
+	public static Map<String, String> prePay(Map<String, String> postMap, HttpServletRequest request) {
 		/**
 		 * 获取小程序的数据
 		 */
@@ -66,14 +67,14 @@ public class PayController {
 		obj.put("nonce_str", UUID.randomUUID().toString().replace("-", ""));
 		// 商品描述 String(128)
 		try {
-			obj.put("body", String.valueOf("测试商品下单".getBytes("UTF-8")));
+			obj.put("body", postMap.get("body")!=null && postMap.get("body").length()>0 ? String.valueOf(postMap.get("body").getBytes("UTF-8")) : "TestPay");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		// 商户订单号 String(32) 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*且在同一个商户号下唯一
 		obj.put("out_trade_no", UUID.randomUUID().toString().replace("-", ""));
 		// 标价金额 int 订单总金额，单位为分
-		obj.put("total_fee", "1");
+		obj.put("total_fee", postMap.get("total_fee")!=null && postMap.get("total_fee").length()>0 ? postMap.get("total_fee") : "1");
 		// 终端IP String(64) 支持IPV4和IPV6两种格式的IP地址。调用微信支付API的机器IP
 		obj.put("spbill_create_ip", getIpAddress(request));
 		// 通知地址 String(256) 异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数
@@ -82,7 +83,7 @@ public class PayController {
 		// JSAPI--JSAPI支付（或小程序支付）、NATIVE--Native支付、APP--app支付，MWEB--H5支付
 		obj.put("trade_type", "JSAPI");
 		// 用户标识 String(128) trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识
-		obj.put("openid", OPENID);
+		obj.put("openid", postMap.get("openid")!=null && postMap.get("openid").length()>0 ? postMap.get("openid") : OPENID);
 
 		// 对传送数据进行签名(但不包括sign)
 		String stringA = firstSign(obj);
@@ -95,7 +96,8 @@ public class PayController {
 		String requestData = Map2XMLStr(obj);
 		// 发起请求获取预支付交易单
 		String result = request(requestData);
-//		System.out.println("获取到的预支付交易单号:\n" + result);
+		
+		return XMLStr2Map(result);
 	}
 
 	/**
