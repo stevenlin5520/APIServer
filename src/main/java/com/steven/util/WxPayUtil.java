@@ -41,12 +41,18 @@ public class WxPayUtil {
 	// 微信服务后台获取预支付交易单的地址
 	private static final String WXSERVER = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 	// 小程序APPID
-	private static final String APPID = "您的小程序APPID";
+	private static final String APPID = "wxd9564b8666be8516";
 	// 商户号
-	private static final String MCHID = "你的商户号";
+	private static final String MCHID = "1524932721";
 	// 商户私钥
-	private static final String KEY = "你的商户号Key";
-	
+	private static final String KEY = "4F0FC23BAA304EEDB63D23DDC8C49F72";
+/*	// 小程序APPID
+	private static final String APPID = "wxd9564b8666be8516";
+	// 商户号
+	private static final String MCHID = "1524932721";
+	// 商户私钥
+	private static final String KEY = "4F0FC23BAA304EEDB63D23DDC8C49F72";
+*/	
 	
 	/**
 	 * 

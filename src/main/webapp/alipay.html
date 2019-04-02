@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>支付宝扫码支付Demo</title>
+</head>
+<script src="js/jquery.min.js"></script>
+<script src="js/qrious.min.js"></script>
+<script type="text/javascript">
+	//var timer = null;
+	function alipay(){
+		var money = $(".money").val();
+		var orderID = '';
+		/* 获取预支付交易单生成二维码  */
+		$.ajax({
+			url: "http://192.168.33.199:8080/APIServer/alipay/pay",
+			type: 'POST',
+			data: {"money":money},
+			dataType: 'JSON',
+			success(res){
+				console.log("获取服务器数据:"+JSON.stringify(res));
+				if(res.result == 'SUCCESS'){
+					orderID = res.orderID;
+					
+					//生成二维码
+			         var qr=new QRious({
+			             element:document.getElementById('qrcode'),
+			             size:250,
+			             level:'H',
+			             value:res.qrcode
+		             });
+					
+					/* 判断用户是否扫码支付成功 */
+					/* $.ajax({
+						url: "alipay/queryStatus",
+						type: 'POST',
+						data: {"orderID": orderID},
+						dataType: 'JSON',
+						scuccess(data){
+							console.log("获取支付结果数据:"+JSON.stringify(data));
+							if(res.result == 'SUCCESS'){
+								console.log(res.status == true ? "支付成功！" : "支付失败！");
+							}
+						}
+					}) */
+					
+					//调用定时器
+			        getResult(orderID);
+				}
+				
+				
+			}
+		})
+	};
+	
+	function getResult(orderID){
+		timer = setTimeout(function(){
+			console.log("执行定时器......");
+			$.ajax({
+				//url: "alipay/query",
+				url: 'http://192.168.33.199:8080/APIServer/alipay/query',
+				type: 'POST',
+				data: {"orderID": orderID},
+				dataType: 'JSON',
+				success(res){
+					console.log("获取支付结果数据:"+JSON.stringify(res));
+					if(res.result == 'SUCCESS' && ("TRADE_SUCCESS" == res.status || "TRADE_FINISHED" == res.status)){
+						console.log("用户支付成功！");
+						clearTimeout(timer);
+					}else{
+						console.log("用户还未支付！")
+						getResult(orderID);
+					}
+				}
+			})
+			
+		}, 6000);
+	}
+</script>
+<body>
+	<img id="qrcode"><br/>
+	
+	请输入金额:<input name="money" value="" class="money"/>
+	<input type="button" onclick="alipay()" value="获取支付二维码"/>
+</body>
+</html>
