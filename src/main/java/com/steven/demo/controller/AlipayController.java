@@ -34,7 +34,7 @@ public class AlipayController {
 	@RequestMapping("/pay")
 	@ResponseBody
 	public Map<String,Object> payMoney(String money){
-		
+		System.out.println("请求支付宝预支付");
 		//获取预支付信息
 		Map<String, Object> result = AlipayUtil.prePay(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase(), money);
 		return result;
@@ -50,6 +50,7 @@ public class AlipayController {
 	@RequestMapping("/query")
 	@ResponseBody
 	public Map<String,Object> query(String orderID){ 
+		System.out.println("请求支付宝订单查询");
 		Map<String, Object> result = AlipayUtil.queryPay(orderID);
 		/*if(result != null && "SUCCESS".equals(result.get("result"))){
 			if("TRADE_SUCCESS".equals(result.get("status")) || "TRADE_FINISHED".equals(result.get("status"))){
@@ -58,6 +59,20 @@ public class AlipayController {
 		}*/
 		
 		return result;
+	}
+	
+	
+	/**
+	 * 
+	 * @Descript alipay.trade.wap.pay（手机网站支付接口2.0）
+	 * @param money 付款金额
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/h5")
+	public Map<String,Object> h5Pay(String money){
+		System.out.println("请求支付宝H5支付");
+		return AlipayUtil.h5Pay(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase(), money);
 	}
 	
 	
@@ -110,7 +125,10 @@ public class AlipayController {
 	
 	
 	/**
-	 * 支付宝服务器主动通知商户服务器里指定的页面http/https路径
+	 * 
+	 * @Descript 支付宝服务器异步通知商户服务器里指定的页面
+	 * @param request
+	 * @return
 	 */
 	@RequestMapping("/notifyurl")
 	@ResponseBody
@@ -134,10 +152,16 @@ public class AlipayController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "pay_notify.html";
+		return "notify_url.html";
 	}
 	
 	
+	/**
+	 * 
+	 * @Descript 支付宝服务器异步通知商户服务器里指定的页面
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("/returnurl")
 	@ResponseBody
 	public String returnUrl(HttpServletRequest request){
@@ -158,6 +182,6 @@ public class AlipayController {
 			e.printStackTrace();
 		}
 		
-		return "pay_return.html";
+		return "return_url.html";
 	}
 }

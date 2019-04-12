@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>支付宝手机网站支付接口快速通道(接口名：alipay.trade.wap.pay)</title>
+</head>
+<body>
+	<button class="new-btn-login" style="text-align:center;" onclick="clickH5Pay();">调用支付宝手机网站支付</button>
+</body>
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript">
+	function clickH5Pay(){
+		$.ajax({
+			url:'http://192.168.33.199:8080/APIServer/alipay/h5',
+			data: {"money":0.01},
+			type: 'POST',
+			dataType: 'JSON',
+			//contentType:"application/json;charset=UTF-8",
+			success(res){
+				console.log("pay success!",res)
+				if(res.result){
+					$('body').append(res.Form);
+				}
+			},
+			error(res){
+				console.log("pay error!",res)
+			}
+		})
+	}
+</script>
+</html>
